@@ -71,14 +71,14 @@ class Feature extends Enum
     public static function getIcons(): array
     {
         return [
-            self::PREMIUM_PAINT_QUALITY => 'painting.png',
-            self::BATCH_PAINTED => 'paint-roller.png',
-            self::PRINTED => 'cubes.png',
-            self::RESTORED => 'tools.png',
-            self::BRAND_NEW => 'painting.png',
-            self::CUSTOM_PAINT_JOB => 'palette.png',
+            self::PREMIUM_PAINT_QUALITY => 'premium_paint_quality.png',
+            self::BATCH_PAINTED => 'batch_painted.png',
+            self::PRINTED => '3d_printed.png',
+            self::RESTORED => 'restored.png',
+            self::BRAND_NEW => 'brand_new.png',
+            self::CUSTOM_PAINT_JOB => 'custom_paint_job.png',
             self::DIORAMA => 'diorama.png',
-            self::FULL_ARMY => 'army.png',
+            self::FULL_ARMY => 'full_army.png',
         ];
     }
 

@@ -9,12 +9,12 @@
                 </div>
                 <div class="grid grid-cols-2 gap-x-12">
                     <div class="col-span-1">
-                        <product-carousel></product-carousel>
+                        <product-carousel :paths="{{$images}}"></product-carousel>
                         <div class="flex flex-col gap-y-5 my-5">
                             @if ($product->features)
                                 @foreach ($product->features as $feature)
                                     <div class="flex justify-start items-center gap-x-5">
-                                        <img src="/storage/images/{{ \App\Enums\Feature::getIcons()[$feature] }}"
+                                        <img src="/storage/images/feature_icons/{{ \App\Enums\Feature::getIcons()[$feature] }}"
                                             class="h-12 w-12" alt="">
                                         <p class="text-lg font-ibarra italic">
                                             {{ \App\Enums\Feature::getLabels()[$feature] }}

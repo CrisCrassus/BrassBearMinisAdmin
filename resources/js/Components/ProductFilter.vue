@@ -44,7 +44,7 @@
                 <div v-if="filter.isOpen" class="ml-4">
                     <div
                         v-for="(status, key) in filter.filters"
-                        class="font-ibarra my-4 flex gap-x-4"
+                        class="font-ibarra my-4 flex gap-x-4 items-center"
                     >
                         <input
                             type="checkbox"

@@ -19,9 +19,18 @@ use Inertia\Inertia;
 Route::get('/', function () {
 
     $minutes = 1440;
+
     Cache::forget('featuredProducts');
+
     $products = Cache::remember('featuredProducts', $minutes, function () {
-        return Product::where('is_featured', true)->where('published', '1')->where('sold_at', null)->get(['title', 'slug', 'price', 'is_featured']);
+        return Product::where('sold_at', null)
+            ->where('published', true)
+            ->where('is_featured', true)
+            ->join('images', function ($join) {
+                $join->on('products.id', '=', 'images.product_id')->where('images.is_primary', true);
+            })
+            ->select('products.title', 'products.price', 'products.slug', 'images.path')
+            ->get();
     });
 
     return view('index', [

@@ -13,7 +13,7 @@ class ProductController extends Controller
 {
     public function index()
     {
-        $products = Product::with(['range', 'unitType', 'primaryImage'])->where('sold_at', null);
+        $products = Product::with(['range', 'unitType'])->where('sold_at', null);
 
         if (isset($_GET['range'])) {
             $products->whereIn('range_id', Range::whereIn('slug', explode(',', $_GET['range']))->pluck('id'));
@@ -27,6 +27,11 @@ class ProductController extends Controller
         if (isset($_GET['material'])) {
             $products->whereIn('material', explode(',', $_GET['material']));
         }
+
+        $products->join('images', function ($join) {
+                    $join->on('products.id', '=', 'images.product_id')->where('images.is_primary', true);
+                });
+
         return view('product.index', [
             'products' => $products->where('published', 1)->paginate(15)->withQueryString()
         ]);
@@ -35,26 +40,36 @@ class ProductController extends Controller
     public function show($slug)
     {
 
-        $product = Product::where('slug', $slug)->with(['range', 'unitType'])->first();
+        $product = Product::where('slug', $slug)->with(['range', 'unitType', 'images'])->first();
 
         $relatedRangeProducts = Product::where('published', 1)
             ->where('sold_at', null)
-            ->where('id', '!=', $product->id)
+            ->where('products.id', '!=', $product->id)
             ->where('range_id', $product->range_id)
             ->inRandomOrder()
+            ->join('images', function ($join) {
+                $join->on('products.id', '=', 'images.product_id')->where('images.is_primary', true);
+            })
             ->limit(4)
-            ->get(['title', 'slug', 'price']);
+            ->select(['products.id', 'products.title', 'products.slug', 'products.price', 'images.path'])
+            ->get();
+
 
         $relatedUnitTypeProducts = Product::where('published', 1)
             ->where('sold_at', null)
-            ->where('id', '!=', $product->id)
+            ->where('products.id', '!=', $product->id)
             ->where('unit_type_id', $product->unit_type_id)
             ->inRandomOrder()
+            ->join('images', function ($join) {
+                $join->on('products.id', '=', 'images.product_id')->where('images.is_primary', true);
+            })
             ->limit(4)
-            ->get(['title', 'slug', 'price']);
+            ->select(['products.title', 'products.slug', 'products.price', 'images.path'])
+            ->get();
 
         return view('product.show', [
             'product' => $product,
+            'images' => $product->images->sortByDesc('is_primary')->pluck('path'),
             'relatedRangeProducts' => $relatedRangeProducts,
             'relatedUnitTypeProducts' => $relatedUnitTypeProducts
         ]);

@@ -32,6 +32,7 @@ return new class extends Migration
             $table->timestamp('sold_at')->nullable();
             $table->boolean('published')->default(false);
             $table->timestamps();
+            $table->softDeletes();
         });
     }
 

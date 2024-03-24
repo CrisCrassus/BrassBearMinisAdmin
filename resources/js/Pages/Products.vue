@@ -30,11 +30,13 @@ const props = defineProps({
                         <div class="text-gray-500">
                             You're viewing the Products page!
                         </div>
-                        <button
-                            class="bg-gray-400 hover:bg-gray-600 text-white outline-none focus:outline focus:outline-black transition-all duration-200 rounded-lg px-4 py-3 flex justify-center items-center"
-                        >
-                            Add Products
-                        </button>
+                        <a :href="route('products.add')">
+                            <button
+                                class="bg-gray-400 hover:bg-gray-600 text-white outline-none focus:outline focus:outline-black transition-all duration-200 rounded-lg px-4 py-3 flex justify-center items-center"
+                            >
+                                Add Products
+                            </button>
+                        </a>
                     </div>
                     <div
                         class="rounded-lg overflow-hidden border-1 border-solid border-gray-300 my-5 shadow-xl"
@@ -124,7 +126,12 @@ const props = defineProps({
                                         {{ product.sold ? "Yes" : "-" }}
                                     </td>
                                     <td class="py-3 px-2 text-xs">
-                                        <a :href="'/admin/products/' + product.slug">
+                                        <a
+                                            :href="
+                                                '/admin/products/' +
+                                                product.slug
+                                            "
+                                        >
                                             <button
                                                 class="bg-gray-400 text-xs hover:bg-gray-600 text-white outline-none focus:outline focus:outline-black transition-all duration-200 rounded-lg px-4 py-2 flex justify-center items-center"
                                             >

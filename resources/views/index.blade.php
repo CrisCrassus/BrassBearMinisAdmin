@@ -65,13 +65,13 @@
                         <label for="contact-email" class="font-ibarra text-xl">Email</label>
                         <br>
                         <input id="contact-email" name="contact-email" type="text"
-                            class="w-full shadow-custom h-9 px-2 font-ibarra mt-3">
+                            class="w-full shadow-custom h-9 px-2 font-ibarra mt-3 border-none">
                     </div>
                     <div class="mt-5">
                         <label for="contact-message" class="font-ibarra text-xl">Message</label>
                         <br>
                         <textarea id="contact-message" name="contact-message" type="text" rows="8"
-                            class="w-full shadow-custom p-2 font-ibarra mt-3"></textarea>
+                            class="w-full shadow-custom p-2 font-ibarra mt-3 border-none"></textarea>
                     </div>
                     <div class="w-full flex justify-center mt-3">
                         <button

@@ -36,6 +36,10 @@ export default {
             type: Array,
             required: true,
         },
+        materials: {
+            type: Array,
+            required: true,
+        },
     },
     data() {
         return {
@@ -49,10 +53,18 @@ export default {
                       base_size: 0,
                       model_count: 0,
                       price: 0,
+                      range_id: null,
+                      unit_type_id: null,
                       ebay_link: "",
+                      is_featured: false,
+                      sold_at: false,
+                      published: false,
+                      features: [],
                   },
             newKeyword: "",
             newWargear: "",
+            newFeature: null,
+            newMaterial: null,
         };
     },
     methods: {
@@ -78,6 +90,27 @@ export default {
             this.product.wargear.splice(index, 1);
         },
 
+        addFeature() {
+            if (this.newFeature !== null && this.product.features !== null) {
+                this.product.features.push(this.newFeature);
+                this.newFeature = null;
+            } else if (this.newFeature !== null && this.product.features === null){
+                this.product.features = [this.newFeature];
+                this.newFeature = null;
+            }
+        },
+
+        deleteFeature(index) {
+            this.product.features.splice(index, 1);
+        },
+
+        addMaterial() {
+            if (this.newMaterial !== null) {
+                this.product.material = this.newMaterial;
+                this.newMaterial = null;
+            }
+        },
+
         toggleFeatured() {
             this.product.is_featured = !this.product.is_featured;
         },
@@ -91,22 +124,32 @@ export default {
         },
 
         saveProduct() {
-            axios
-                .post("/products/" + this.product.slug, this.product)
-                .then((response) => {
-                    console.log("HERE");
-                    window.location.href = "/products";
+            if (this.productToEdit) {
+                axios
+                .post("/admin/products/" + this.product.slug, this.product)
+                .then(() => {
+                    window.location.href = "/admin/products";
                 })
                 .catch((error) => {
                     console.log(error);
                 });
+            } else {
+                axios
+                .post("/admin/products/", this.product)
+                .then(() => {
+                    window.location.href = "/admin/products";
+                })
+                .catch((error) => {
+                    console.log(error);
+                });
+            }
         },
     },
 };
 </script>
 
 <template>
-    <Head v-if="product !== null" title="Edit Product" />
+    <Head v-if="productToEdit" title="Edit Product" />
     <Head v-else title="Add Product" />
 
     <AuthenticatedLayout>
@@ -114,9 +157,15 @@ export default {
             <div class="flex justify-between">
                 <h2
                     class="font-semibold text-xl text-gray-800 leading-tight"
-                    v-if="product !== null"
+                    v-if="productToEdit"
                 >
                     Edit {{ product.title }} | {{ product.identifier }}
+                </h2>
+                <h2
+                    class="font-semibold text-xl text-gray-800 leading-tight"
+                    v-else
+                >
+                    Add Product
                 </h2>
                 <Label
                     v-if="product.sold_at !== null"
@@ -233,7 +282,7 @@ export default {
                         <div class="flex justify-start gap-x-3 cursor-pointer">
                             <div
                                 v-for="(item, index) in product.features"
-                                @click="deleteWargear(index)"
+                                @click="deleteFeature(index)"
                                 class="bg-gray-200 text-gray-900 px-3 py-2 rounded-lg"
                             >
                                 {{ item }}
@@ -241,15 +290,26 @@ export default {
                         </div>
                         <div class="flex mt-4 gap-x-5">
                             <SelectMenu
+                                v-model="newFeature"
                                 :objectList="features"
                                 :asArray="true"
                             />
-                            <!-- <button
-                                @click="addWargear()"
+                            <button
+                                @click="addFeature()"
                                 class="items-center bg-gray-400 hover:bg-gray-600 text-white outline-none focus:outline focus:outline-black transition-all duration-200 rounded-lg px-4 py-3 flex justify-center"
                             >
-                                Add Wargear
-                            </button> -->
+                                Add Feature
+                            </button>
+                        </div>
+                    </div>
+                    <div>
+                        <Label>Material</Label>
+                        <div class="flex mt-4 gap-x-5">
+                            <SelectMenu
+                                v-model="this.product.material"
+                                :objectList="this.materials"
+                                :asArray="true"
+                            />
                         </div>
                     </div>
                     <div>
@@ -290,7 +350,7 @@ export default {
                                 Not Featured
                             </div>
                         </div>
-                        <div>
+                        <div v-if="productToEdit">
                             <div
                                 v-if="product.sold_at === null"
                                 @click="markSold()"
@@ -329,6 +389,15 @@ export default {
                                 Save
                             </div>
                         </div>
+                        <a v-if="productToEdit" :href="'/products/' + product.slug" target="_blank">
+                            <div>
+                                <div
+                                    class="w-44 bg-blue-300 hover:bg-blue-400 transition-all duration-200 inline-block py-4 px-5 rounded-lg text-center cursor-pointer"
+                                >
+                                    View Live
+                                </div>
+                            </div>
+                        </a>
                     </div>
                 </div>
             </div>

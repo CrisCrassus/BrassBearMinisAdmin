@@ -18,6 +18,7 @@ class Product extends Model
         'title',
         'slug',
         'description',
+        'identifier',
         'price',
         'features',
         'keywords',
@@ -58,7 +59,12 @@ class Product extends Model
 
     public function images(): HasMany
     {
-        return $this->hasMany(File::class);
+        return $this->hasMany(Images::class);
+    }
+
+    public function primaryImage()
+    {
+        return $this->images()->where('is_primary', 1);
     }
 
     public function createIdentifier(): void

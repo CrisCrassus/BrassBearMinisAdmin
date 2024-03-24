@@ -6,6 +6,7 @@ namespace Database\Seeders;
 
 use App\Models\Product;
 use App\Models\Range;
+use App\Models\User;
 use Illuminate\Database\Seeder;
 
 class DatabaseSeeder extends Seeder
@@ -17,6 +18,7 @@ class DatabaseSeeder extends Seeder
     {
         $this->call(ProductSeeder::class);
         $this->call(UnitTypeSeeder::class);
+        $this->call(ImageSeeder::class);
 
         Range::create(
             [
@@ -72,10 +74,13 @@ class DatabaseSeeder extends Seeder
             ]
         );
 
-
-        // \App\Models\User::factory()->create([
-        //     'name' => 'Test User',
-        //     'email' => 'test@example.com',
-        // ]);
+        User::factory()->create([
+            'id' => 1,
+            'name' => 'Cristiano Crassus',
+            'email' => 'admin@brassbearminis.com',
+            'password' => '$2y$12$OcCCHe9Qmvsb3wC.unDmnu6kxZSaXSDCMDQ1JnPGnFm7Gu5lFsRuy',
+            'created_at' => '2024-03-23 12:58:44',
+            'updated_at' => '2024-03-23 12:58:44',
+        ]);
     }
 }

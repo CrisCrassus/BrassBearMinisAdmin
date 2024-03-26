@@ -18,8 +18,5 @@
         "vite": "^5.0",
         "vue": "^3.4.0"
     },
-    "dependencies": {
-        "vue-image-zoomer": "^2.2.3",
-        "vue3-dropzone": "^2.2.1"
-    }
+    "dependencies": {}
 }

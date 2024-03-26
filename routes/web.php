@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\FileController;
 use App\Http\Controllers\FrontEnd\ProductController as FrontEndProductController;
 use App\Http\Controllers\FrontEnd\RangeController as FrontEndRangeController;
 use App\Http\Controllers\ProductController;
@@ -59,6 +60,8 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('/admin/add-products', [ProductController::class, 'add'])->name('products.add');
     Route::post('/admin/products', [ProductController::class, 'store'])->name('products.store');
     Route::post('/admin/products/{slug}', [ProductController::class, 'update'])->name('products.update');
+
+    Route::post('/admin/files/upload', [FileController::class, 'upload'])->name('file.upload');
 
     Route::get('/admin/ranges', [RangeController::class, 'index'])->name('ranges');
 

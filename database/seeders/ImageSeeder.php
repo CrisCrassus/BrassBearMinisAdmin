@@ -17,7 +17,7 @@ class ImageSeeder extends Seeder
                 'filename' => '1.png',
                 'size' => '213',
                 'type' => 'image/png',
-                'is_primary' => false,
+                'is_primary' => true,
                 'product_id' => 1,
                 'path' => '/storage/images/product_images/1.png',
             ],
@@ -33,7 +33,7 @@ class ImageSeeder extends Seeder
                 'filename' => '3.png',
                 'size' => '213',
                 'type' => 'image/png',
-                'is_primary' => false,
+                'is_primary' => true,
                 'product_id' => 2,
                 'path' => '/storage/images/product_images/3.png',
             ],
@@ -49,7 +49,7 @@ class ImageSeeder extends Seeder
                 'filename' => '5.png',
                 'size' => '213',
                 'type' => 'image/png',
-                'is_primary' => false,
+                'is_primary' => true,
                 'product_id' => 3,
                 'path' => '/storage/images/product_images/5.png',
             ],
@@ -65,7 +65,7 @@ class ImageSeeder extends Seeder
                 'filename' => '7.png',
                 'size' => '213',
                 'type' => 'image/png',
-                'is_primary' => false,
+                'is_primary' => true,
                 'product_id' => 4,
                 'path' => '/storage/images/product_images/7.png',
             ],
@@ -81,7 +81,7 @@ class ImageSeeder extends Seeder
                 'filename' => '9.png',
                 'size' => '213',
                 'type' => 'image/png',
-                'is_primary' => false,
+                'is_primary' => true,
                 'product_id' => 5,
                 'path' => '/storage/images/product_images/9.png',
             ],
@@ -97,7 +97,7 @@ class ImageSeeder extends Seeder
                 'filename' => '11.png',
                 'size' => '213',
                 'type' => 'image/png',
-                'is_primary' => false,
+                'is_primary' => true,
                 'product_id' => 6,
                 'path' => '/storage/images/product_images/11.png',
             ],
@@ -113,7 +113,7 @@ class ImageSeeder extends Seeder
                 'filename' => '13.png',
                 'size' => '213',
                 'type' => 'image/png',
-                'is_primary' => false,
+                'is_primary' => true,
                 'product_id' => 7,
                 'path' => '/storage/images/product_images/13.png',
             ],
@@ -128,7 +128,7 @@ class ImageSeeder extends Seeder
         ];
 
         foreach ($images as $image) {
-            \App\Models\Images::create($image);
+            \App\Models\Image::create($image);
         }
     }
 }

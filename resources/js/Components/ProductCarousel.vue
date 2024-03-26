@@ -12,13 +12,7 @@
     </div>
 </template>
 <script>
-import VueImageZoomer from 'vue-image-zoomer'
-import 'vue-image-zoomer/dist/style.css';
-
 export default {
-    components: {
-        VueImageZoomer,
-    },
     props: {
         paths: {
             type: Array,

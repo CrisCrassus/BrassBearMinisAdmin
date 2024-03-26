@@ -56,38 +56,38 @@ class ProductController extends Controller
     public function store()
     {
         request()->validate([
-            'title' => 'required',
-            'description' => 'required',
-            'price' => 'required',
-            'keywords' => 'required',
-            'range_id' => 'required',
-            'is_featured' => 'required',
-            'wargear' => 'required',
-            'ebay_link' => 'required',
-            'unit_type_id' => 'required',
-            'model_count' => 'required',
-            'base_size' => 'required',
-            'published' => 'required',
+            'product.title' => 'required',
+            'product.description' => 'required',
+            'product.price' => 'required',
+            'product.keywords' => 'required',
+            'product.range_id' => 'required',
+            'product.is_featured' => 'required',
+            'product.wargear' => 'required',
+            'product.ebay_link' => 'required',
+            'product.unit_type_id' => 'required',
+            'product.model_count' => 'required',
+            'product.base_size' => 'required',
+            'product.published' => 'required',
         ]);
 
         $identifier = strtoupper(substr(str_shuffle('abcdefghijklmnopqrstuvwxyz0123456789'), 0, 6));
 
         $fields = [
-            'title' => request()['title'],
+            'title' => request()['product']['title'],
             'slug' => Str::uuid()->toString(),
-            'description' => request()['description'],
+            'description' => request()['product']['description'],
             'identifier' => $identifier,
-            'keywords' => request()['keywords'],
-            'model_count' => request()['model_count'],
-            'features' => request()['features'],
-            'price' => request()['price'],
-            'range_id' => request()['range_id'],
+            'keywords' => request()['product']['keywords'],
+            'model_count' => request()['product']['model_count'],
+            'features' => request()['product']['features'],
+            'price' => request()['product']['price'],
+            'range_id' => request()['product']['range_id'],
             'is_featured' => 0,
-            'ebay_link' => request()['ebay_link'],
-            'unit_type_id' => request()['unit_type_id'],
-            'wargear' => request()['wargear'],
-            'material' => request()['material'],
-            'base_size' => request()['base_size'],
+            'ebay_link' => request()['product']['ebay_link'],
+            'unit_type_id' => request()['product']['unit_type_id'],
+            'wargear' => request()['product']['wargear'],
+            'material' => request()['product']['material'],
+            'base_size' => request()['product']['base_size'],
             'published' => 0
         ];
 
@@ -98,41 +98,43 @@ class ProductController extends Controller
 
     public function update($slug)
     {
+
         request()->validate([
-            'title' => 'required',
-            'description' => 'required',
-            'price' => 'required',
-            'keywords' => 'required',
-            'range_id' => 'required',
-            'is_featured' => 'required',
-            'wargear' => 'required',
-            'ebay_link' => 'required',
-            'unit_type_id' => 'required',
-            'model_count' => 'required',
-            'base_size' => 'required',
-            'published' => 'required',
+            'product.title' => 'required',
+            'product.description' => 'required',
+            'product.price' => 'required',
+            'product.keywords' => 'required',
+            'product.range_id' => 'required',
+            'product.is_featured' => 'required',
+            'product.wargear' => 'required',
+            'product.ebay_link' => 'required',
+            'product.unit_type_id' => 'required',
+            'product.model_count' => 'required',
+            'product.base_size' => 'required',
+            'product.published' => 'required',
         ]);
 
         $product = Product::where('slug', $slug)->firstOrFail();
 
         $product->update([
-            'title' => request()['title'],
-            'slug' => Str::uuid()->toString(),
-            'description' => request()['description'],
+            'title' => request()['product']['title'],
+            'description' => request()['product']['description'],
             'identifier' => strtoupper(substr(str_shuffle('abcdefghijklmnopqrstuvwxyz0123456789'), 0, 6)),
-            'keywords' => request()['keywords'],
-            'model_count' => request()['model_count'],
-            'features' => request()['features'],
-            'price' => request()['price'],
-            'range_id' => request()['range_id'],
-            'is_featured' => request()['is_featured'],
-            'ebay_link' => request()['ebay_link'],
-            'unit_type_id' => request()['unit_type_id'],
-            'wargear' => request()['wargear'],
-            'material' => request()['material'],
-            'base_size' => request()['base_size'],
-            'sold_at' => request()->sold_at,
-            'published' => request()['published']
+            'keywords' => request()['product']['keywords'],
+            'model_count' => request()['product']['model_count'],
+            'features' => request()['product']['features'],
+            'price' => request()['product']['price'],
+            'range_id' => request()['product']['range_id'],
+            'is_featured' => request()['product']['is_featured'],
+            'ebay_link' => request()['product']['ebay_link'],
+            'unit_type_id' => request()['product']['unit_type_id'],
+            'wargear' => request()['product']['wargear'],
+            'material' => request()['product']['material'],
+            'base_size' => request()['product']['base_size'],
+            'sold_at' => request()['product']['sold_at'],
+            'published' => request()['product']['published']
         ]);
+
+        return request();
     }
 }

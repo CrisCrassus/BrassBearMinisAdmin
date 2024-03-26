@@ -65,6 +65,8 @@ export default {
             newWargear: "",
             newFeature: null,
             newMaterial: null,
+            imageInput: null,
+            associatedImagePaths: [],
         };
     },
     methods: {
@@ -77,6 +79,10 @@ export default {
 
         deleteKeyword(index) {
             this.product.keywords.splice(index, 1);
+        },
+
+        handleFileUpload(event) {
+            this.imageInput = event.target.files[0];
         },
 
         addWargear() {
@@ -94,7 +100,10 @@ export default {
             if (this.newFeature !== null && this.product.features !== null) {
                 this.product.features.push(this.newFeature);
                 this.newFeature = null;
-            } else if (this.newFeature !== null && this.product.features === null){
+            } else if (
+                this.newFeature !== null &&
+                this.product.features === null
+            ) {
                 this.product.features = [this.newFeature];
                 this.newFeature = null;
             }
@@ -123,25 +132,47 @@ export default {
             this.product.sold_at = new Date();
         },
 
+        uploadImages() {
+            let formData = new FormData();
+            formData.append("image", this.imageInput);
+            formData.append("productID", this.product.id);
+            axios
+                .post("/admin/files/upload", formData)
+                .then((response) => {
+                    this.associatedImagePaths.push(response.data.file);
+                })
+                .catch((error) => {
+                    console.error(
+                        "Error uploading file:",
+                        error.response.data.error
+                    );
+                });
+        },
+
         saveProduct() {
             if (this.productToEdit) {
+                const productData = {
+                    product: this.product,
+                };
+
                 axios
-                .post("/admin/products/" + this.product.slug, this.product)
-                .then(() => {
-                    window.location.href = "/admin/products";
-                })
-                .catch((error) => {
-                    console.log(error);
-                });
+                    .post("/admin/products/" + this.product.slug, productData)
+                    .then((response) => {
+                        //window.location.href = "/admin/products";
+                        console.log(response);
+                    })
+                    .catch((error) => {
+                        console.log(error);
+                    });
             } else {
                 axios
-                .post("/admin/products/", this.product)
-                .then(() => {
-                    window.location.href = "/admin/products";
-                })
-                .catch((error) => {
-                    console.log(error);
-                });
+                    .post("/admin/products/", this.product)
+                    .then(() => {
+                        window.location.href = "/admin/products";
+                    })
+                    .catch((error) => {
+                        console.log(error);
+                    });
             }
         },
     },
@@ -177,6 +208,7 @@ export default {
 
         <div class="py-12">
             <div class="max-w-7xl mx-auto sm:px-6 lg:px-8 space-y-6">
+                <!-- // Product Information -->
                 <div
                     class="p-4 sm:p-8 bg-white shadow sm:rounded-lg flex flex-col gap-y-5"
                 >
@@ -264,6 +296,7 @@ export default {
                         ></NumberInput>
                     </div>
                 </div>
+                <!-- // Sale Information -->
                 <div
                     class="p-4 sm:p-8 bg-white shadow sm:rounded-lg flex flex-col gap-y-5"
                 >
@@ -327,6 +360,32 @@ export default {
                         ></TextInput>
                     </div>
                 </div>
+                <!-- //Images -->
+                <div
+                    class="p-4 sm:p-8 bg-white shadow sm:rounded-lg flex flex-col gap-y-5"
+                >
+                    <div class="border-b border-gray-300 border-solid py-4">
+                        <h4 class="text-2xl">Images</h4>
+                    </div>
+
+                    <div class="grid grid-cols-4 gap-4 w-full">
+                        <div
+                            v-for="(image, index) in associatedImagePaths"
+                            :key="index"
+                            class="col-span-1"
+                        >
+                            <img
+                                :src="'/' + image"
+                                alt="Product Image"
+                                class=""
+                            />
+                        </div>
+                    </div>
+
+                    <input type="file" @change="handleFileUpload" id="file" />
+                    <button @click="uploadImages">Upload</button>
+                </div>
+                <!-- // Actions -->
                 <div
                     class="p-4 sm:p-8 bg-white shadow sm:rounded-lg flex flex-col gap-y-5"
                 >
@@ -389,7 +448,11 @@ export default {
                                 Save
                             </div>
                         </div>
-                        <a v-if="productToEdit" :href="'/products/' + product.slug" target="_blank">
+                        <a
+                            v-if="productToEdit"
+                            :href="'/products/' + product.slug"
+                            target="_blank"
+                        >
                             <div>
                                 <div
                                     class="w-44 bg-blue-300 hover:bg-blue-400 transition-all duration-200 inline-block py-4 px-5 rounded-lg text-center cursor-pointer"

@@ -14,14 +14,12 @@ class UnitTypeSeeder extends Seeder
     {
         $unitTypes = [
             'Infantry',
-            'Battleline',
             'Artillery',
             'Vehicle',
             'Monster',
             'Hero',
             'War Machine',
             'Magic',
-            'Spell',
             'Character',
             'Hero',
             'Leader',

@@ -18,6 +18,7 @@ return new class extends Migration
             $table->string('slug');
             $table->string('banner_path');
             $table->timestamps();
+            $table->softDeletes();
         });
     }
 

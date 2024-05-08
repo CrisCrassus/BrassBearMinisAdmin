@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Enums\Feature;
 use App\Enums\Material;
+use App\Models\Image;
 use App\Models\Product;
 use Illuminate\Support\Str;
 use App\Models\Range;
@@ -21,7 +22,7 @@ class ProductController extends Controller
 
     public function show($slug)
     {
-        $product = Product::where('slug', $slug)->firstOrFail();
+        $product = Product::where('slug', $slug)->with('images')->firstOrFail();
         $ranges = Range::all(['id', 'title']);
         $unitTypes = UnitType::all(['id', 'title']);
         $materials = Material::getValues();
@@ -98,15 +99,12 @@ class ProductController extends Controller
 
     public function update($slug)
     {
-
         request()->validate([
             'product.title' => 'required',
             'product.description' => 'required',
             'product.price' => 'required',
-            'product.keywords' => 'required',
             'product.range_id' => 'required',
             'product.is_featured' => 'required',
-            'product.wargear' => 'required',
             'product.ebay_link' => 'required',
             'product.unit_type_id' => 'required',
             'product.model_count' => 'required',
@@ -116,10 +114,14 @@ class ProductController extends Controller
 
         $product = Product::where('slug', $slug)->firstOrFail();
 
+        if (isset(request()['primaryImageId']) && request()['primaryImageId'] != null) {
+            $product->unsetPrimaryImage();
+            $product->setPrimaryImage(Image::find(request()['primaryImageId']));
+        }
+
         $product->update([
             'title' => request()['product']['title'],
             'description' => request()['product']['description'],
-            'identifier' => strtoupper(substr(str_shuffle('abcdefghijklmnopqrstuvwxyz0123456789'), 0, 6)),
             'keywords' => request()['product']['keywords'],
             'model_count' => request()['product']['model_count'],
             'features' => request()['product']['features'],
@@ -132,9 +134,17 @@ class ProductController extends Controller
             'material' => request()['product']['material'],
             'base_size' => request()['product']['base_size'],
             'sold_at' => request()['product']['sold_at'],
-            'published' => request()['product']['published']
+            'published' => request()['product']['published'] ? 1 : 0
         ]);
 
         return request();
+    }
+
+    public function delete($slug)
+    {
+        $product = Product::where('slug', $slug)->firstOrFail();
+        $product->delete();
+
+        return response()->json(['message' => 'Product deleted']);
     }
 }

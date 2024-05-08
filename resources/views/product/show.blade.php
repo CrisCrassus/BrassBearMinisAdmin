@@ -9,7 +9,7 @@
                 </div>
                 <div class="grid grid-cols-2 gap-x-12">
                     <div class="col-span-1">
-                        <product-carousel :paths="{{$images}}"></product-carousel>
+                        <product-carousel :paths="{{ $images }}"></product-carousel>
                         <div class="flex flex-col gap-y-5 my-5">
                             @if ($product->features)
                                 @foreach ($product->features as $feature)
@@ -37,30 +37,34 @@
                                 {{ $product->description }}
                             </p>
                         </div>
-                        <div class="my-8 text-md">
-                            <h6 class="font-bold">Wargear</h6>
-                            <ul class="ml-4 mt-1">
-                                @foreach ($product->wargear as $item)
-                                    <li>{{ $item }}</li>
-                                @endforeach
-                            </ul>
-                        </div>
-                        <div class="my-8 text-md">
-                            <h6><strong>Keywords</strong> (Faction Codex/Battletome)</h6>
-                            <p class="mt-1 uppercase">
-                                @foreach ($product->keywords as $index => $keyword)
-                                    @if ($index != count($product->keywords) - 1)
-                                        {{ $keyword }},
-                                    @else
-                                        {{ $keyword }}
-                                    @endif
-                                @endforeach
-                            </p>
-                        </div>
+                        @if (count($product->wargear) > 0)
+                            <div class="my-8 text-md">
+                                <h6 class="font-bold">Wargear</h6>
+                                <ul class="ml-4 mt-1">
+                                    @foreach ($product->wargear as $item)
+                                        <li class="capitalize">{{ $item }}</li>
+                                    @endforeach
+                                </ul>
+                            </div>
+                        @endif
+                        @if (count($product->keywords) > 0)
+                            <div class="my-8 text-md">
+                                <h6><strong>Keywords</strong> (Faction Codex/Battletome)</h6>
+                                <p class="mt-1 uppercase">
+                                    @foreach ($product->keywords as $index => $keyword)
+                                        @if ($index != count($product->keywords) - 1)
+                                            {{ $keyword }},
+                                        @else
+                                            {{ $keyword }}
+                                        @endif
+                                    @endforeach
+                                </p>
+                            </div>
+                        @endif
                         @if ($product->sold_at === null)
                             <a href="https://{{ $product->ebay_link }}" target="_blank">
                                 <div
-                                    class="w-full hover:cursor-pointer text-decoration-none bg-primary px-10 py-3 font-ibarra text-white hover:text-primary hover:bg-white hover:text-bold border border-solid border-primary transition-all duration-200">
+                                    class="w-full mt-8 hover:cursor-pointer text-decoration-none bg-primary px-10 py-3 font-ibarra text-white hover:text-primary hover:bg-white hover:text-bold border border-solid border-primary transition-all duration-200">
                                     <p class="text-2xl font-bold border-b border-white border-solid text-center py-2">
                                         £{{ $product->price }}
                                     </p>
@@ -71,7 +75,7 @@
                             </a>
                         @else
                             <div
-                                class="w-full hover:cursor-pointer text-decoration-none bg-primary px-10 py-3 font-ibarra text-white border border-solid border-primary transition-all duration-200">
+                                class="w-full mt-8 hover:cursor-pointer text-decoration-none bg-primary px-10 py-3 font-ibarra text-white border border-solid border-primary transition-all duration-200">
                                 <p class="text-2xl text-center py-2">
                                     Sold Out
                                 </p>

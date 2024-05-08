@@ -17,9 +17,10 @@ return new class extends Migration
             $table->string('filename');
             $table->integer('size');
             $table->string('type');
-            $table->boolean('is_primary');
+            $table->boolean('is_primary')->default(false);
             $table->timestamps();
-            $table->unsignedBigInteger('product_id')->references('id')->on('products')->onDelete('cascade');
+            $table->unsignedBigInteger('product_id')->references('id')->on('products')->onDelete('cascade')->nullable();
+            $table->softDeletes();
         });
     }
 

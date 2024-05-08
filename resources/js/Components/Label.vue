@@ -1,6 +1,6 @@
 <script setup>
 import { onMounted, ref } from "vue";
-import { defineModel, defineExpose } from "vue";
+import { defineModel } from "vue";
 
 
 

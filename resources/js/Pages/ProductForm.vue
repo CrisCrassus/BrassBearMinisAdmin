@@ -7,6 +7,14 @@ import TextArea from "../Components/TextArea.vue";
 import NumberInput from "../Components/NumberInput.vue";
 import SelectMenu from "../Components/SelectMenu.vue";
 import axios from "axios";
+import BackPanel from "../Components/BackPanel.vue";
+import ToggleableAction from "../Components/ToggleableAction.vue";
+import CustomAction from "../Components/CustomAction.vue";
+import Action from "../Components/Action.vue";
+import TabletSelect from "../Components/TabletSelect.vue";
+import TabletInput from "../Components/TabletInput.vue";
+import ImageUpload from "../Components/ImageUpload.vue";
+import { urls } from "../urls";
 
 export default {
     components: {
@@ -17,6 +25,13 @@ export default {
         TextArea,
         NumberInput,
         SelectMenu,
+        BackPanel,
+        ImageUpload,
+        ToggleableAction,
+        CustomAction,
+        TabletSelect,
+        TabletInput,
+        Action,
     },
     props: {
         productToEdit: {
@@ -60,115 +75,37 @@ export default {
                       sold_at: false,
                       published: false,
                       features: [],
+                      images: [],
                   },
-            newKeyword: "",
-            newWargear: "",
-            newFeature: null,
-            newMaterial: null,
-            imageInput: null,
-            associatedImagePaths: [],
+            primaryImageId: null,
         };
     },
     methods: {
-        addKeyword() {
-            if (this.newKeyword !== "") {
-                this.product.keywords.push(this.newKeyword);
-                this.newKeyword = "";
-            }
-        },
-
-        deleteKeyword(index) {
-            this.product.keywords.splice(index, 1);
-        },
-
-        handleFileUpload(event) {
-            this.imageInput = event.target.files[0];
-        },
-
-        addWargear() {
-            if (this.newWargear !== "") {
-                this.product.wargear.push(this.newWargear);
-                this.newWargear = "";
-            }
-        },
-
-        deleteWargear(index) {
-            this.product.wargear.splice(index, 1);
-        },
-
-        addFeature() {
-            if (this.newFeature !== null && this.product.features !== null) {
-                this.product.features.push(this.newFeature);
-                this.newFeature = null;
-            } else if (
-                this.newFeature !== null &&
-                this.product.features === null
-            ) {
-                this.product.features = [this.newFeature];
-                this.newFeature = null;
-            }
-        },
-
-        deleteFeature(index) {
-            this.product.features.splice(index, 1);
-        },
-
-        addMaterial() {
-            if (this.newMaterial !== null) {
-                this.product.material = this.newMaterial;
-                this.newMaterial = null;
-            }
-        },
-
-        toggleFeatured() {
-            this.product.is_featured = !this.product.is_featured;
-        },
-
-        togglePublished() {
-            this.product.published = !this.product.published;
-        },
-
-        markSold() {
-            this.product.sold_at = new Date();
-        },
-
-        uploadImages() {
-            let formData = new FormData();
-            formData.append("image", this.imageInput);
-            formData.append("productID", this.product.id);
-            axios
-                .post("/admin/files/upload", formData)
-                .then((response) => {
-                    this.associatedImagePaths.push(response.data.file);
-                })
-                .catch((error) => {
-                    console.error(
-                        "Error uploading file:",
-                        error.response.data.error
-                    );
-                });
-        },
-
         saveProduct() {
             if (this.productToEdit) {
                 const productData = {
                     product: this.product,
+                    primaryImageId: this.primaryImageId ?? null
                 };
 
                 axios
-                    .post("/admin/products/" + this.product.slug, productData)
+                    .post(urls['products.update'] + this.product.slug, productData)
                     .then((response) => {
-                        //window.location.href = "/admin/products";
+                        window.location.href = urls['products.index'];
                         console.log(response);
                     })
                     .catch((error) => {
                         console.log(error);
                     });
             } else {
+                const productData = {
+                    product: this.product,
+                };
+
                 axios
-                    .post("/admin/products/", this.product)
-                    .then(() => {
-                        window.location.href = "/admin/products";
+                    .post(urls['products.store'], productData)
+                    .then((response) => {
+                        window.location.href = urls['products.update'] + response.data.slug;
                     })
                     .catch((error) => {
                         console.log(error);
@@ -185,7 +122,7 @@ export default {
 
     <AuthenticatedLayout>
         <template #header>
-            <div class="flex justify-between">
+            <div class="flex justify-between items-center">
                 <h2
                     class="font-semibold text-xl text-gray-800 leading-tight"
                     v-if="productToEdit"
@@ -199,22 +136,18 @@ export default {
                     Add Product
                 </h2>
                 <Label
-                    v-if="product.sold_at !== null"
-                    class="font-bold text-red-500"
+                    v-if="product.sold_at !== null && product.sold_at !== false"
+                    class="font-bold text-red-500 mb-0"
                     >Sold: {{ product.sold_at }}
                 </Label>
+                <CustomAction v-if="productToEdit && product.sold_at === null" falseColor="amber" label="Mark Sold" :value="this.product.sold_at" @input="($event) => {this.product.sold_at = new Date()}"/>
+
             </div>
         </template>
 
         <div class="py-12">
             <div class="max-w-7xl mx-auto sm:px-6 lg:px-8 space-y-6">
-                <!-- // Product Information -->
-                <div
-                    class="p-4 sm:p-8 bg-white shadow sm:rounded-lg flex flex-col gap-y-5"
-                >
-                    <div class="border-b border-gray-300 border-solid py-4">
-                        <h4 class="text-2xl">Model Properties</h4>
-                    </div>
+                <BackPanel title="Model Properties">
                     <div>
                         <Label>Title</Label>
                         <TextInput
@@ -245,48 +178,9 @@ export default {
                         >
                         </SelectMenu>
                     </div>
-                    <div>
-                        <Label>Keywords</Label>
-                        <div class="flex justify-start gap-x-3 cursor-pointer">
-                            <div
-                                v-for="(item, index) in product.keywords"
-                                @click="deleteKeyword(index)"
-                                class="bg-gray-200 text-gray-900 px-3 py-2 rounded-lg"
-                            >
-                                {{ item }}
-                            </div>
-                        </div>
-                        <div class="flex mt-4 gap-x-5">
-                            <TextInput class="w-1/5" v-model="newKeyword" />
-                            <button
-                                @click="addKeyword()"
-                                class="items-center bg-gray-400 hover:bg-gray-600 text-white outline-none focus:outline focus:outline-black transition-all duration-200 rounded-lg px-4 py-3 flex justify-center"
-                            >
-                                Add Keyword
-                            </button>
-                        </div>
-                    </div>
-                    <div>
-                        <Label>Wargear</Label>
-                        <div class="flex justify-start gap-x-3 cursor-pointer">
-                            <div
-                                v-for="(item, index) in product.wargear"
-                                @click="deleteWargear(index)"
-                                class="bg-gray-200 text-gray-900 px-3 py-2 rounded-lg"
-                            >
-                                {{ item }}
-                            </div>
-                        </div>
-                        <div class="flex mt-4 gap-x-5">
-                            <TextInput class="w-1/5" v-model="newWargear" />
-                            <button
-                                @click="addWargear()"
-                                class="items-center bg-gray-400 hover:bg-gray-600 text-white outline-none focus:outline focus:outline-black transition-all duration-200 rounded-lg px-4 py-3 flex justify-center"
-                            >
-                                Add Wargear
-                            </button>
-                        </div>
-                    </div>
+
+                    <TabletInput label="Keywords" :currentTablets="this.product.keywords" @tablets="($event) => { this.product.keywords = $event}" />
+                    <TabletInput label="Wargear" :currentTablets="this.product.wargear" @tablets="($event) => { this.product.wargear = $event}" />
 
                     <div>
                         <Label>Base Size (mm)</Label>
@@ -295,14 +189,9 @@ export default {
                             class="w-2/3"
                         ></NumberInput>
                     </div>
-                </div>
-                <!-- // Sale Information -->
-                <div
-                    class="p-4 sm:p-8 bg-white shadow sm:rounded-lg flex flex-col gap-y-5"
-                >
-                    <div class="border-b border-gray-300 border-solid py-4">
-                        <h4 class="text-2xl">Sale Information</h4>
-                    </div>
+                </BackPanel>
+
+                <BackPanel title="Sale Information">
                     <div>
                         <Label>Model Count</Label>
                         <NumberInput
@@ -310,31 +199,8 @@ export default {
                             class="w-2/3"
                         ></NumberInput>
                     </div>
-                    <div>
-                        <Label>Features</Label>
-                        <div class="flex justify-start gap-x-3 cursor-pointer">
-                            <div
-                                v-for="(item, index) in product.features"
-                                @click="deleteFeature(index)"
-                                class="bg-gray-200 text-gray-900 px-3 py-2 rounded-lg"
-                            >
-                                {{ item }}
-                            </div>
-                        </div>
-                        <div class="flex mt-4 gap-x-5">
-                            <SelectMenu
-                                v-model="newFeature"
-                                :objectList="features"
-                                :asArray="true"
-                            />
-                            <button
-                                @click="addFeature()"
-                                class="items-center bg-gray-400 hover:bg-gray-600 text-white outline-none focus:outline focus:outline-black transition-all duration-200 rounded-lg px-4 py-3 flex justify-center"
-                            >
-                                Add Feature
-                            </button>
-                        </div>
-                    </div>
+                    <TabletSelect label="Features" :currentTablets="this.product.features" :list="features" @tablets="($event) => { this.product.features = $event}"/>
+
                     <div>
                         <Label>Material</Label>
                         <div class="flex mt-4 gap-x-5">
@@ -359,110 +225,21 @@ export default {
                             class="w-2/3"
                         ></TextInput>
                     </div>
-                </div>
-                <!-- //Images -->
-                <div
-                    class="p-4 sm:p-8 bg-white shadow sm:rounded-lg flex flex-col gap-y-5"
-                >
-                    <div class="border-b border-gray-300 border-solid py-4">
-                        <h4 class="text-2xl">Images</h4>
-                    </div>
+                </BackPanel>
 
-                    <div class="grid grid-cols-4 gap-4 w-full">
-                        <div
-                            v-for="(image, index) in associatedImagePaths"
-                            :key="index"
-                            class="col-span-1"
-                        >
-                            <img
-                                :src="'/' + image"
-                                alt="Product Image"
-                                class=""
-                            />
-                        </div>
-                    </div>
+                <BackPanel v-if="productToEdit" title="Images">
+                    <ImageUpload :images="this.product.images" :id="this.product.id" :identifier="this.product.identifier" @primaryImageId="($event) => {this.primaryImageId = $event}"/>
+                </BackPanel>
 
-                    <input type="file" @change="handleFileUpload" id="file" />
-                    <button @click="uploadImages">Upload</button>
-                </div>
-                <!-- // Actions -->
-                <div
-                    class="p-4 sm:p-8 bg-white shadow sm:rounded-lg flex flex-col gap-y-5"
-                >
-                    <div class="border-b border-gray-300 border-solid py-4">
-                        <h4 class="text-2xl">Actions</h4>
-                    </div>
+                <BackPanel  title="Actions">
                     <div class="flex justify-between">
-                        <div>
-                            <div
-                                v-if="product.is_featured"
-                                @click="toggleFeatured()"
-                                class="bg-green-300 hover:bg-green-400 transition-all duration-200 w-44 inline-block py-4 px-5 rounded-lg text-center cursor-pointer"
-                            >
-                                Featured
-                            </div>
-                            <div
-                                v-else
-                                @click="toggleFeatured()"
-                                class="bg-red-300 hover:bg-red-400 transition-all duration-200 inline-block w-44 py-4 px-5 rounded-lg text-center cursor-pointer"
-                            >
-                                Not Featured
-                            </div>
-                        </div>
-                        <div v-if="productToEdit">
-                            <div
-                                v-if="product.sold_at === null"
-                                @click="markSold()"
-                                class="w-44 bg-amber-300 hover:bg-amber-400 transition-all duration-200 inline-block py-4 px-5 rounded-lg text-center cursor-pointer"
-                            >
-                                Mark As Sold
-                            </div>
-                            <div
-                                v-else
-                                class="bg-green-300 hover:bg-green-400 transition-all duration-200 inline-block py-4 px-5 rounded-lg w-44 text-center cursor-pointer"
-                            >
-                                Sold
-                            </div>
-                        </div>
-                        <div>
-                            <div
-                                v-if="product.published"
-                                @click="togglePublished()"
-                                class="w-44 bg-green-300 hover:bg-green-400 transition-all duration-200 inline-block py-4 px-5 rounded-lg text-center cursor-pointer"
-                            >
-                                Published
-                            </div>
-                            <div
-                                v-else
-                                @click="togglePublished()"
-                                class="bg-amber-300 hover:bg-amber-400 transition-all duration-200 inline-block py-4 px-5 rounded-lg w-44 text-center cursor-pointer"
-                            >
-                                Unpublished
-                            </div>
-                        </div>
-                        <div>
-                            <div
-                                @click="saveProduct()"
-                                class="w-44 bg-blue-300 hover:bg-blue-400 transition-all duration-200 inline-block py-4 px-5 rounded-lg text-center cursor-pointer"
-                            >
-                                Save
-                            </div>
-                        </div>
-                        <a
-                            v-if="productToEdit"
-                            :href="'/products/' + product.slug"
-                            target="_blank"
-                        >
-                            <div>
-                                <div
-                                    class="w-44 bg-blue-300 hover:bg-blue-400 transition-all duration-200 inline-block py-4 px-5 rounded-lg text-center cursor-pointer"
-                                >
-                                    View Live
-                                </div>
-                            </div>
-                        </a>
+                        <ToggleableAction label="Featured" :value="this.product.is_featured" @input="($event) => {this.product.is_featured = $event}"/>
+                        <ToggleableAction label="Published" :value="this.product.published" @input="($event) => {this.product.published = $event}"/>
+                        <Action label="Save" @click="saveProduct()"/>
+                        <Action label="View Live" :link="'/products/' + this.product.slug"/>
                     </div>
-                </div>
+                </BackPanel>
+
             </div>
         </div>
     </AuthenticatedLayout>

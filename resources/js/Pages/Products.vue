@@ -1,7 +1,7 @@
 <script setup>
 import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout.vue";
 import { Head } from "@inertiajs/vue3";
-import { ref } from "vue";
+import ServiceManager from "@/services/ServiceManager";
 
 const props = defineProps({
     products: {
@@ -9,6 +9,17 @@ const props = defineProps({
         required: true,
     },
 });
+
+function deleteProduct(slug) {
+    ServiceManager.deleteProduct(slug)
+        .then(() => {
+            window.location.reload();
+        })
+        .catch((error) => {
+            console.error(error);
+        });
+}
+
 </script>
 
 <template>
@@ -111,31 +122,45 @@ const props = defineProps({
                                         {{ product.identifier }}
                                     </td>
                                     <td class="py-3 px-2 text-xs">
-                                        {{ product.price }}
+                                        £{{ product.price }}
                                     </td>
                                     <td class="py-3 px-2 text-xs">
                                         {{ product.range.title }}
                                     </td>
                                     <td class="py-3 px-2 text-xs">
-                                        {{ product.featured ? "Yes" : "No" }}
+                                        {{ product.is_featured ? "Yes" : "No" }}
                                     </td>
                                     <td class="py-3 px-2 text-xs">
                                         {{ product.model_count }}
                                     </td>
                                     <td class="py-3 px-2 text-xs">
-                                        {{ product.sold ? "Yes" : "-" }}
+                                        {{ product.sold_at ? "Yes" : "-" }}
                                     </td>
-                                    <td class="py-3 px-2 text-xs">
+                                    <td class="py-3 px-2 text-xs flex gap-x-4 items-center">
                                         <a
-                                            :href="
-                                                '/admin/products/' +
-                                                product.slug
-                                            "
+                                            :href="route('products.edit', product.slug)"
                                         >
                                             <button
                                                 class="bg-gray-400 text-xs hover:bg-gray-600 text-white outline-none focus:outline focus:outline-black transition-all duration-200 rounded-lg px-4 py-2 flex justify-center items-center"
                                             >
                                                 Edit
+                                            </button>
+                                        </a>
+                                        <button
+                                            @click="deleteProduct(product.slug)"
+                                            class="bg-red-400 text-xs hover:bg-red-600 text-white outline-none focus:outline focus:outline-black transition-all duration-200 rounded-lg px-4 py-2 flex justify-center items-center"
+                                        >
+                                            Delete
+                                        </button>
+                                        <p>|</p>
+                                        <a
+                                            :href="route('fe.products.show', product.slug)"
+                                            target="_blank"
+                                        >
+                                            <button
+                                                class="bg-blue-400 text-xs hover:bg-blue-600 text-white outline-none focus:outline focus:outline-black transition-all duration-200 rounded-lg px-4 py-2 flex justify-center items-center"
+                                            >
+                                                View Live
                                             </button>
                                         </a>
                                     </td>
@@ -148,3 +173,4 @@ const props = defineProps({
         </div>
     </AuthenticatedLayout>
 </template>
+@/services/ServiceManager

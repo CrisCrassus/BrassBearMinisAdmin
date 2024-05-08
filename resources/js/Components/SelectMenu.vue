@@ -1,13 +1,11 @@
 <script setup>
 
 const model = defineModel({
-    type: Number,
     required: true,
 });
 
 defineProps({
     objectList: {
-        type: Object,
         required: true,
     },
 

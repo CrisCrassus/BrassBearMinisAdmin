@@ -4,6 +4,7 @@ namespace Database\Seeders;
 
 // use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 
+use App\Models\Configuration;
 use App\Models\Product;
 use App\Models\Range;
 use App\Models\User;
@@ -16,61 +17,16 @@ class DatabaseSeeder extends Seeder
      */
     public function run(): void
     {
-        $this->call(ProductSeeder::class);
-        $this->call(UnitTypeSeeder::class);
-        $this->call(ImageSeeder::class);
+        // $this->call(RangeSeeder::class);
+        // $this->call(UnitTypeSeeder::class);
+        // $this->call(ImageSeeder::class);
+        // $this->call(ProductSeeder::class);
 
-        Range::create(
+        Configuration::create(
             [
-                'title' => 'Warhammer 40K',
-                'description' => '',
-                'slug' => 'warhammer_40k',
-                'banner_path' => '/storage/images/range_banners/range_banner.png',
-            ]
-        );
-
-        Range::create(
-            [
-                'title' => 'Age Of Sigmar',
-                'description' => '',
-                'slug' => 'age_of_sigmar',
-                'banner_path' => '/storage/images/range_banners/range_banner.png',
-            ]
-        );
-
-        Range::create(
-            [
-                'title' => 'Warhammer: Underworlds',
-                'description' => '',
-                'slug' => 'underworlds',
-                'banner_path' => '/storage/images/range_banners/range_banner.png',
-            ]
-        );
-
-        Range::create(
-            [
-                'title' => '3D Printed Minis',
-                'description' => '',
-                'slug' => '3d_printed_minis',
-                'banner_path' => '/storage/images/range_banners/range_banner.png',
-            ]
-        );
-
-        Range::create(
-            [
-                'title' => 'Flesh Of Gods',
-                'description' => '',
-                'slug' => 'flesh_of_gods',
-                'banner_path' => '/storage/images/range_banners/range_banner.png',
-            ]
-        );
-
-        Range::create(
-            [
-                'title' => 'Claymore Castings',
-                'description' => '',
-                'slug' => 'claymore_castings',
-                'banner_path' => '/storage/images/range_banners/range_banner.png',
+                'show_services' => 0,
+                'show_contact' => 1,
+                'featured_title' => 'Featured Minis',
             ]
         );
 

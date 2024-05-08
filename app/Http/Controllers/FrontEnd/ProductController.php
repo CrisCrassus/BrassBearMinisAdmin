@@ -40,7 +40,7 @@ class ProductController extends Controller
     public function show($slug)
     {
 
-        $product = Product::where('slug', $slug)->with(['range', 'unitType', 'images'])->first();
+        $product = Product::where('slug', $slug)->with(['range', 'unitType', 'images'])->firstOrFail();
 
         $relatedRangeProducts = Product::where('published', 1)
             ->where('sold_at', null)

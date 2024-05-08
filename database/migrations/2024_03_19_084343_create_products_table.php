@@ -23,11 +23,11 @@ return new class extends Migration
             $table->integer('range_id')->nullable();
             $table->boolean('is_featured')->default(false);
             $table->json('wargear')->nullable();
-            $table->string('ebay_link');
+            $table->string('ebay_link')->nullable();
             $table->integer('unit_type_id')->nullable();
             $table->string('quality')->nullable();
             $table->string('material')->nullable();
-            $table->integer('model_count');
+            $table->integer('model_count')->default(0);
             $table->string('base_size');
             $table->timestamp('sold_at')->nullable();
             $table->boolean('published')->default(false);

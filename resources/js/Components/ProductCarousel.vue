@@ -1,9 +1,9 @@
 <template>
-    <img :src="paths[currentImage]" alt="" />
+    <img :src="'/' + paths[currentImage]" alt="" />
     <div class="grid grid-cols-3 gap-12 mt-5">
         <div v-for="(path, index) in paths" @click="changeImage(index)" class="cursor-pointer">
             <img
-                :src="path"
+                :src="'/' + path"
                 alt=""
                 class="border-2 border-transparent"
                 :class="{ 'border-2 border-primary': index === currentImage }"

@@ -2,15 +2,13 @@
 
 namespace App\Models;
 
-use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Database\Eloquent\SoftDeletes;
-use Illuminate\Support\Facades\Hash;
-use PhpParser\Node\Expr\Cast\String_;
+use Throwable;
 
 class Product extends Model
 {
@@ -33,7 +31,8 @@ class Product extends Model
         'material',
         'model_count',
         'base_size',
-        'sold_at'
+        'sold_at',
+        'published'
     ];
 
     protected $casts = [
@@ -64,9 +63,30 @@ class Product extends Model
         return $this->hasMany(Image::class);
     }
 
-    public function primaryImage(): HasOne
+    public function primaryImage()
     {
         return $this->hasOne(Image::class)->where('is_primary', true);
+    }
+
+    public function unsetPrimaryImage()
+    {
+        try {
+            $p = $this->primaryImage()->first();
+            $p->is_primary = 0;
+            $p->save();
+        } catch (Throwable $e) {
+            return $e;
+        }
+    }
+
+    public function setPrimaryImage(Image $image)
+    {
+        try {
+            $image->is_primary = true;
+            $image->save();
+        } catch (Throwable $e) {
+            return $e;
+        }
     }
 
     public function createIdentifier(): void

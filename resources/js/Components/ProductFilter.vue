@@ -54,7 +54,7 @@
                             v-model="status.selected"
                         />
                         <label :for="key" class="capitalize">{{
-                            key.replaceAll("_", " ")
+                            key.replaceAll("-", " ")
                         }}</label>
                     </div>
                 </div>
@@ -99,15 +99,7 @@ export default {
             loading: true,
             filters: {
                 unit_type: {
-                    filters: {
-                        character: { selected: false },
-                        unit: { selected: false },
-                        battleline: { selected: false },
-                        leader: { selected: false },
-                        behemoth: { selected: false },
-                        artillery: { selected: false },
-                        other: { selected: false },
-                    },
+                    filters: {},
                     isOpen: false,
                     show: true,
                 },
@@ -141,6 +133,7 @@ export default {
     mounted() {
         this.checkShow();
         this.rangeSlugs();
+        this.unitTypeSlugs();
     },
     methods: {
         toggleFilter(key) {
@@ -168,6 +161,28 @@ export default {
                         this.filters.range.filters = response.data.reduce(
                             (acc, range) => {
                                 acc[range] = { selected: false };
+                                return acc;
+                            },
+                            {}
+                        );
+                    })
+                    .then(() => {
+                        this.setFiltersFromUrlParams();
+                        this.loading = false;
+
+                    });
+            } catch (error) {
+                console.error(error);
+            }
+        },
+        unitTypeSlugs() {
+            try {
+                axios
+                    .get("/api/unit-types")
+                    .then((response) => {
+                        this.filters.unit_type.filters = response.data.reduce(
+                            (acc, unit_type) => {
+                                acc[unit_type] = { selected: false };
                                 return acc;
                             },
                             {}
@@ -215,7 +230,6 @@ export default {
                         this.filters[key].isOpen = true;
                         keyArray = selectedFilters;
                     }
-                    console.log(keyArray);
                     keyArray.forEach((filterKey) => {
                         filter.filters[filterKey].selected = true;
                     });

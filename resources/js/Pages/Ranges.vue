@@ -2,6 +2,7 @@
 import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout.vue";
 import { Head } from "@inertiajs/vue3";
 import { ref } from "vue";
+import ServiceManager from "@/services/ServiceManager";
 
 const props = defineProps({
     ranges: {
@@ -9,6 +10,17 @@ const props = defineProps({
         required: true,
     },
 });
+
+function deleteRange() {
+    ServiceManager.deleteRange(range.slug)
+        .then(() => {
+            window.location.href = route('ranges');
+        })
+        .catch((error) => {
+            console.log(error);
+        });
+}
+
 </script>
 
 <template>
@@ -30,11 +42,13 @@ const props = defineProps({
                         <div class="text-gray-500">
                             You're viewing the Ranges page!
                         </div>
-                        <button
+                        <a :href="route('ranges.add')">
+                            <button
                             class="bg-gray-400 hover:bg-gray-600 text-white outline-none focus:outline focus:outline-black transition-all duration-200 rounded-lg px-4 py-3 flex justify-center items-center"
                         >
                             Add Range
                         </button>
+                        </a>
                     </div>
                     <div
                         class="rounded-lg overflow-hidden border-1 border-solid border-gray-300 my-5 shadow-xl"
@@ -68,12 +82,14 @@ const props = defineProps({
                                     <td class="py-3 px-2 text-xs">
                                         {{ range.slug }}
                                     </td>
-                                    <td class="py-3 px-2 text-xs">
-                                        <button
+                                    <td class="py-3 px-2 text-xs flex gap-x-4">
+                                        <a :href="route('ranges.update', range.slug)">
+                                            <button
                                             class="bg-gray-400 text-xs hover:bg-gray-600 text-white outline-none focus:outline focus:outline-black transition-all duration-200 rounded-lg px-4 py-2 flex justify-center items-center"
                                         >
                                             Edit
                                         </button>
+                                        </a>
                                     </td>
                                 </tr>
                             </tbody>

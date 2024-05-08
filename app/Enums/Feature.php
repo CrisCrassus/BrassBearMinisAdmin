@@ -17,14 +17,14 @@ use Rexlabs\Enum\Enum;
  */
 class Feature extends Enum
 {
-    const PREMIUM_PAINT_QUALITY = 'premium_paint_quality';
-    const BATCH_PAINTED = 'batch_painted';
-    const PRINTED = '3d_printed';
+    const PREMIUM_PAINT_QUALITY = 'premium-paint-quality';
+    const BATCH_PAINTED = 'batch-painted';
+    const PRINTED = '3d-printed';
     const RESTORED = 'restored';
-    const BRAND_NEW = 'brand_new';
-    const CUSTOM_PAINT_JOB = 'custom_paint_job';
+    const BRAND_NEW = 'brand-new';
+    const CUSTOM_PAINT_JOB = 'custom-paint-job';
     const DIORAMA = 'diorama';
-    const FULL_ARMY = 'full_army';
+    const FULL_ARMY = 'full-army';
 
     public static function getValues(): array
     {
